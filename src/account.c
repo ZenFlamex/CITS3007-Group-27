@@ -25,8 +25,7 @@ account_t *account_create(const char *userid, const char *plaintext_password,
 
 
 void account_free(account_t *acc) {
-  // remove the contents of this function and replace it with your own code.
-  (void) acc;
+  free(acc);
 }
 
 
