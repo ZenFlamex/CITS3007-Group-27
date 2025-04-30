@@ -63,31 +63,40 @@ void log_message(log_level_t level, const char *fmt, ...) {
 }
 
 
+#include <string.h>
+#include "db.h"
+#include "logging.h"
+#include <stdbool.h>
+#include <stdlib.h>
+
 bool account_lookup_by_userid(const char *userid, account_t *acc) {
-  // This is a stub function. In a real implementation, this function would
-  // query a database to find the account by user ID.
-  // This implementation returns true and fills in a valid struct for userid "bob",
-  // and returns false for all other user IDs.
+    if (!userid || !acc) {
+        panic("Invalid arguments to account_lookup_by_userid");
+    }
 
-  // Arguments must be non-null or behaviour is undefined; we choose to
-  // abort in this case.
-  if (!userid || !acc) {
-    panic("Invalid arguments to account_lookup_by_userid");
-  }
+    memset(acc, 0, sizeof(account_t));  // 清空结构体
 
-  // Example of a simple lookup. Note that no valid hashed password is set.
-  // userid must be a valid, null-terminated string.
-  // (Note that it is impossible in C for a function to check whether a string has been
-  // properly null-terminated; this is always the responsibility of the caller.)
-  if (strncmp(acc->userid, "bob", USER_ID_LENGTH) == 0) {
-    account_t bob_acc = { 0 };
+    if (strncmp(userid, "bob", USER_ID_LENGTH) == 0) {
+        strcpy(acc->userid, "bob");
+        strcpy(acc->email, "bob@example.com");
+        strcpy(acc->birthdate, "1990-01-01");
+        return true;
+    }
 
-    strcpy(bob_acc.userid, "bob");
-    strcpy(bob_acc.email, "bob.smith@example.com");
-    strcpy(bob_acc.birthdate, "1990-01-01");
-    *acc = bob_acc;
-    return true;
-  }
-  return false;
+    if (strncmp(userid, "bob_banned", USER_ID_LENGTH) == 0) {
+        strcpy(acc->userid, "bob_banned");
+        strcpy(acc->email, "banned@example.com");
+        strcpy(acc->birthdate, "1990-01-01");
+        return true;
+    }
+
+    if (strncmp(userid, "bob_expired", USER_ID_LENGTH) == 0) {
+        strcpy(acc->userid, "bob_expired");
+        strcpy(acc->email, "expired@example.com");
+        strcpy(acc->birthdate, "1990-01-01");
+        return true;
+    }
+
+    // 其他用户一律返回找不到
+    return false;
 }
-
