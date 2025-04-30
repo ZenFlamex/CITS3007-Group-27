@@ -11,9 +11,13 @@
 # vs code files
 .vscode/
 # build files
+test_account
 *.o
 build/
 bin/
 XXX/
 *.~[0-9]~
 *.zip
+#Deoxygen output
+src/html
+src/latex

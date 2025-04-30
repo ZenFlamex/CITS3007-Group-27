@@ -39,6 +39,8 @@ login_result_t handle_login(const char *userid, const char *password,
   log_message(LOG_INFO, "Login success for user '%s'", userid);
 
     // remove the contents of this function and replace it with your own code.
+
+
   (void) userid;
   (void) password;
   (void) client_ip;
