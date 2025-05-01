@@ -37,12 +37,27 @@ bool account_validate_password(const account_t *acc, const char *plaintext_passw
   return false;
 }
 
+/**
+ * Sets password memeber in acc to the hash of the new plaintext password
+ * 
+ * Preconditions:
+ * - acc and new_plaintext_password must be non-NULL.
+ * - new_plaintext_password must be a valid, null-terminated string.
+ * 
+ * @param acc A pointer to the account structure.
+ * @param new_plaintext_password The plaintext of the password to be hashed
+ */
 bool account_update_password(account_t *acc, const char *new_plaintext_password)
 {
-  // remove the contents of this function and replace it with your own code.
-  (void)acc;
-  (void)new_plaintext_password;
-  return false;
+  //NOTE THE SALT AND HASH IN THIS FUNCTION ARE TEMPORARY AND NEED TO BE CHANGED!
+  char salt[HASH_LENGTH] = "TEMP SALT";
+  char password_hash[HASH_LENGTH] = TEMP_HASH_FUNCTION(new_plaintext_password, salt);
+  char combined_salt_hash[HASH_LENGTH];
+
+  strcat(combined_salt_hash,password_hash);
+  strcpy(acc->password_hash,combined_salt_hash);
+
+  return true;
 }
 
 void account_record_login_success(account_t *acc, ip4_addr_t ip)
