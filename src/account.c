@@ -154,9 +154,11 @@ bool email_is_valid(const char *email)
 
 void account_set_email(account_t *acc, const char *new_email)
 {
-  // remove the contents of this function and replace it with your own code.
-  (void)acc;
-  (void)new_email;
+  if (email_is_valid(new_email))
+  {
+    strcpy(acc->email,new_email);
+  }
+  return;
 }
 
 bool account_print_summary(const account_t *acct, int fd)
