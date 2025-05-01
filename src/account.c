@@ -15,13 +15,26 @@
 account_t *account_create(const char *userid, const char *plaintext_password,
                           const char *email, const char *birthdate)
 {
-  // remove the contents of this function and replace it with your own code.
-  (void)userid;
-  (void)plaintext_password;
-  (void)email;
-  (void)birthdate;
+  account_t *acc = malloc(sizeof(account_t));
+  if (acc == NULL){
+    //Do error stuff
+  }
 
-  return NULL;
+  // Set default values
+  acc->account_id = 0;
+  strcpy(acc->userid,*userid);
+  account_update_password(acc,plaintext_password);
+  account_set_email(acc,email);
+  acc->unban_time = 0;
+  acc->expiration_time = 0;
+  acc->login_count = 0;
+  acc->login_fail_count = 0;
+  acc->last_login_time = 0;
+  acc->last_ip = 0;
+
+  // 
+  
+  return acc;
 }
 
 void account_free(account_t *acc)
