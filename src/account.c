@@ -1,6 +1,7 @@
 #include "account.h"
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 /**
  * Create a new account with the specified parameters.
  *
@@ -124,6 +125,31 @@ void account_set_unban_time(account_t *acc, time_t t)
 void account_set_expiration_time(account_t *acc, time_t t)
 {
   acc->expiration_time = t;
+}
+
+/*
+ * Checks if the provided email is valid
+ * Checks length
+ * checks if printable ASKII
+ * no spaces
+ */
+bool email_is_valid(const char *email)
+{
+  int email_length = strlen(email);
+
+  if (email_length >= EMAIL_LENGTH)
+  {
+    return false;
+  }
+  for (int i = 0; i < email_length; i++)
+  {
+    // checks if each charicter is valid
+    if ((email[i] < 33) || (email[i] > 126))
+    {
+      return false;
+    }
+  }
+  return true;
 }
 
 void account_set_email(account_t *acc, const char *new_email)
