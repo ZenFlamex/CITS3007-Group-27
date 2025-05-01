@@ -121,11 +121,14 @@ void account_set_expiration_time(account_t *acc, time_t t)
   acc->expiration_time = t;
 }
 
-/*
+/**
  * Checks if the provided email is valid
- * Checks length
- * checks if printable ASKII
- * no spaces
+ * 
+ * Preconditions:
+ * - email must not be NULL.
+ * 
+ * @param email A pointer to a string
+ * @return true if email is printable ASKII chars and under EMAIL_LENGTH
  */
 bool email_is_valid(const char *email)
 {
@@ -146,6 +149,16 @@ bool email_is_valid(const char *email)
   return true;
 }
 
+/**
+ * Sets email memeber in acc to the new email
+ * 
+ * Preconditions:
+ * - acc and new_email must be non-NULL.
+ * - new_email must be a valid, null-terminated string.
+ * 
+ * @param acc A pointer to the account structure.
+ * @param email A pointer to a string that will become the new email
+ */
 void account_set_email(account_t *acc, const char *new_email)
 {
   if (email_is_valid(new_email))
