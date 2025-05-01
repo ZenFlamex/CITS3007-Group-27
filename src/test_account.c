@@ -3,6 +3,7 @@
 // Run with valgrind: gcc -std=c11 -pedantic-errors -Wall -Wextra -Wconversion -fsanitize=undefined -g test_account.c account.c -o test_account && valgrind --leak-check=full ./test_account
 
 #include "account.h"
+#include "login.h" 
 #include <stdio.h>
 #include <assert.h>
 #include <time.h>
@@ -18,9 +19,44 @@ static account_t create_dummy_account(void)
     return acc;
 }
 
+// --- LOGIN TESTS SECTION ---
+void test_login(const char *userid, const char *password) {
+    login_result_t result = handle_login(userid, password, 0, 0, 0, 0);
+    printf("[LOGIN TEST] userid='%s', password='%s' => result: %d\n",
+           userid, password, result);
+}
+//To compile and run the login tests:
+
+//1. Open your terminal and navigate to the project root:
+
+//```bash
+//cd CITS3007-Group-27
+//2.make CFLAGS='-DALTERNATE_MAIN'
+//3./bin/app
+
+static void run_login_tests(void) {
+    printf("\n========== Starting Login Tests ==========\n");
+
+    // Test 1: Nonexistent user
+    test_login("nonexistent_user", "any_password");
+
+    // Test 2: Incorrect password
+    test_login("bob", "wrongpass");
+
+    // Test 3: Banned user
+    test_login("bob_banned", "correctpassword");
+
+    // Test 4: Expired account
+    test_login("bob_expired", "correctpassword");
+
+    // Test 5: Valid login
+    test_login("bob", "correctpassword");
+
+    printf("========== End of Login Tests ==========\n\n");
+}
+
 int main(void)
 {
-    // BAN AND EXPIRE ACCOUNT TESTS
     // Test account_set_unban_time() and account_is_banned()
     account_t acc1 = create_dummy_account();
     time_t now = time(NULL);
@@ -50,6 +86,11 @@ int main(void)
     account_set_expiration_time(&acc3, now);
     assert(account_is_expired(&acc3) == 1); // Should be expired immediately at expiration_time
 
-    printf("All tests passed.\n");
+    printf("All account tests passed.\n");
+
+    // Run login tests
+    run_login_tests();
+
     return 0;
 }
+
