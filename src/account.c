@@ -322,4 +322,28 @@ void account_set_email(account_t *acc, const char *new_email)
 }
 
 bool account_print_summary(const account_t *acct, int fd) {
+  if (!acct || fd < 0) return false; //!acct: is the acct pointer NULL? || fd < 0: is the file descriptor invalid?
+
+  int written = dprintf(fd,
+      "User ID: %s\n"
+      "Email: %s\n"
+      "Birthdate: %s\n"
+      "Login count: %u\n"
+      "Login failures: %u\n"
+      "Last login time: %ld\n"
+      "Last IP: %u\n"
+      "Banned until: %ld\n"
+      "Expires at: %ld\n",
+      acct->userid,
+      acct->email,
+      acct->birthdate,
+      acct->login_count,
+      acct->login_fail_count,
+      acct->last_login_time,
+      acct->last_ip,
+      acct->unban_time,
+      acct->expiration_time
+  );
+
+  return written > 0;
 }
