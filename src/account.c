@@ -109,9 +109,9 @@ bool account_validate_password(const account_t *acc, const char *plaintext_passw
 bool account_update_password(account_t *acc, const char *new_plaintext_password)
 {
   //NOTE THE SALT AND HASH IN THIS FUNCTION ARE TEMPORARY AND NEED TO BE CHANGED!
-  char salt[HASH_LENGTH] = "TEMP SALT";
-  char password_hash[HASH_LENGTH] = TEMP_HASH_FUNCTION(new_plaintext_password, salt);
-  char combined_salt_hash[HASH_LENGTH];
+  char *salt[HASH_LENGTH] = "TEMP SALT";
+  char *password_hash[HASH_LENGTH] = TEMP_HASH_FUNCTION(new_plaintext_password, salt);
+  char *combined_salt_hash[HASH_LENGTH];
 
   strcat(combined_salt_hash,password_hash);
   strcpy(acc->password_hash,combined_salt_hash);
