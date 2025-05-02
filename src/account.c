@@ -149,8 +149,31 @@ bool account_update_password(account_t *acc, const char *new_plaintext_password)
 }
 
 void account_record_login_success(account_t *acc, ip4_addr_t ip) {
-  
+  if (!acc) return; //this is a null pointer check
+
+  time_t now = time(NULL); 
+  acc->last_login_time = now; //it sets the account's last_login_time to current timestamp
+  acc->last_ip = ip; 
+
+  // Defensive: avoid overflow
+  if (acc->login_count < UINT_MAX) { 
+      acc->login_count++; //before incrementing it
+  }
+  acc->login_fail_count = 0; //successful login resets the count of failed attempts
+  // Format human-readable time
+  char timebuf[64]; //timebuf is a string containing the formatted current time, "2025-04-23 12:34:56"
+  strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", localtime(&now)); 
+  // Format IP address
+  char ipbuf[INET_ADDRSTRLEN];
+  struct in_addr addr = { .s_addr = ip }; //struct in_addr is a struct used to represent an IPv4 address
+  inet_ntop(AF_INET, &addr, ipbuf, sizeof(ipbuf)); 
+  // Log the success event with full context
+  log_message(STDERR_FILENO,
+      "Login success: user=%s | time=%s | ip=%s | login_count=%u",
+      acc->userid, timebuf, ipbuf, acc->login_count
+  );
 }
+
 
 void account_record_login_failure(account_t *acc) {
     
