@@ -24,7 +24,11 @@ account_t *account_create(const char *userid, const char *plaintext_password,
 
   // Set default & supplied values
   acc->account_id = 0;
-  strcpy(acc->userid,*userid);
+  if (strlen(userid) < USER_ID_LENGTH){
+    strcpy(acc->userid,*userid);
+  } else {
+    log_message(LOG_ERROR,"invalid userID. too long");
+  }
   account_update_password(acc,plaintext_password);
   account_set_email(acc,email);
   acc->unban_time = 0;
