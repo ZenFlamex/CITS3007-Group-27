@@ -1,4 +1,5 @@
 #include "account.h"
+#include "logging.h"
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
@@ -17,10 +18,11 @@ account_t *account_create(const char *userid, const char *plaintext_password,
 {
   account_t *acc = malloc(sizeof(account_t));
   if (acc == NULL){
-    //Do error stuff
+    log_message(LOG_ERROR, "failed to allocate memory for account");
+    return NULL;
   }
 
-  // Set default values
+  // Set default & supplied values
   acc->account_id = 0;
   strcpy(acc->userid,*userid);
   account_update_password(acc,plaintext_password);
@@ -31,8 +33,52 @@ account_t *account_create(const char *userid, const char *plaintext_password,
   acc->login_fail_count = 0;
   acc->last_login_time = 0;
   acc->last_ip = 0;
+  
+  // verifying birthday format
+  for (int i = 0; i < 10; i++){
+    if ((i == 4 || i == 7)&& (birthdate[i] != '-')){
+      log_message(LOG_ERROR,"invalid birthday format");
+      account_free(acc);
+      return NULL;
+    }
+    else if (birthdate[i] > '9' || birthdate[i] < '0'){
+      log_message(LOG_ERROR,"invalid birthday format");
+      account_free(acc);
+      return NULL;
+    }
+  }
 
-  // 
+  // verifying birthdate hasn't happened yet
+  time_t current_time_std = time(NULL);
+  struct tm *current_time_struct = localtime(&current_time_std);
+
+  int Birthday_year  = (birthdate[0]-'0') *1000 + (birthdate[1]-'0') * 100 + (birthdate[2]-'0') * 10 + (birthdate[3]-'0');
+  int Birthday_month = (birthdate[5]-'0') *  10 + (birthdate[6]-'0');
+  int Birthday_day   = (birthdate[8]-'0') *  10 + (birthdate[9]-'0');
+
+  if (current_time_struct->tm_year < Birthday_year){
+    log_message(LOG_ERROR,"invalid birthday (day has not happened)");
+    account_free(acc);
+    return NULL;
+  }
+
+  else if (current_time_struct->tm_year == Birthday_year){
+    if (current_time_struct->tm_mon < Birthday_month){
+      log_message(LOG_ERROR,"invalid birthday (day has not happened)");
+      account_free(acc);
+      return NULL;
+
+    }
+    else if (current_time_struct->tm_mon == Birthday_month){
+      if (current_time_struct <= Birthday_day){
+        log_message(LOG_ERROR,"invalid birthday (day has not happened)");
+        account_free(acc);
+        return NULL;
+      }
+    }
+  }
+
+  strcpy(acc->birthdate,*birthdate);
   
   return acc;
 }
