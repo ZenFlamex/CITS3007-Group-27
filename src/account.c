@@ -176,8 +176,34 @@ void account_record_login_success(account_t *acc, ip4_addr_t ip) {
 
 
 void account_record_login_failure(account_t *acc) {
-    
+  if (!acc) return; // Safety check for null pointer
+
+  acc->login_count = 0; // Reset login count due to failure
+  // Defensive: prevent overflow
+  if (acc->login_fail_count < UINT_MAX) { 
+      acc->login_fail_count++;
+  }
+
+  time_t now = time(NULL); 
+
+  char timebuf[64];
+  strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", localtime(&now)); //This formats the current time into a human-readable string, stored in timebuf.
+  // format last known IP (if available)
+  char ipbuf[INET_ADDRSTRLEN] = "unknown"; 
+  struct in_addr addr = { .s_addr = acc->last_ip };
+  inet_ntop(AF_INET, &addr, ipbuf, sizeof(ipbuf)); //it uses the inet_ntop() function to convert a binary IPv4 address into a printable string format, like "127.0.0.1"
+  // warning if approaching UINT_MAX
+  if (acc->login_fail_count > UINT_MAX - 10) { //checks if the login_fail_count is getting dangerously close to its UINT_MAX.
+      log_message(STDERR_FILENO, //if so, it logs a warning to alert the system
+          "Warning: login_fail_count nearing overflow for user %s (fail count = %u)",
+          acc->userid, acc->login_fail_count);
+  }
+  // Log failure
+  log_message(STDERR_FILENO, //STDERR_FILENO is a file descriptor for standard error output (typically value 2)
+      "Login failure: user=%s | time=%s | ip=%s | fail_count=%u", 
+      acc->userid, timebuf, ipbuf, acc->login_fail_count); //timebuf is a string containing the formatted current time, like "2025-04-23 12:34:56"
 }
+
 
 /**
  * Check if an account is currently banned.
