@@ -19,5 +19,8 @@ XXX/
 *.~[0-9]~
 *.zip
 #Deoxygen output
-src/html
-src/latex
+html
+latex
+# Backup and new files from Perl scripts
+*.BAK
+*.NEW
