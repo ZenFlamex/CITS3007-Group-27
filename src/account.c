@@ -62,7 +62,7 @@ void account_record_login_failure(account_t *acc)
  *
  * An account is considered banned if its unban_time is set to a future time.
  *
- * @param acc The account to check (must not be NULL).
+ * @param acc The account to check
  * @return true if the account is banned, false otherwise.
  */
 bool account_is_banned(const account_t *acc)
@@ -82,7 +82,7 @@ bool account_is_banned(const account_t *acc)
  *
  * An account is considered expired if the current time is at or after its expiration_time.
  *
- * @param acc The account to check (must not be NULL).
+ * @param acc The account to check
  * @return true if the account is expired, false otherwise.
  */
 bool account_is_expired(const account_t *acc)
@@ -101,9 +101,6 @@ bool account_is_expired(const account_t *acc)
 /**
  * Set the unban time for an account.
  *
- * Preconditions:
- * - acc must not be NULL.
- *
  * @param acc A pointer to the account structure.
  * @param t The time at which the ban should be lifted.
  */
@@ -114,9 +111,6 @@ void account_set_unban_time(account_t *acc, time_t t)
 
 /**
  * Set the expiration time for an account.
- *
- * Preconditions:
- * - acc must not be NULL.
  *
  * @param acc A pointer to the account structure.
  * @param t The time at which the account should expire.
