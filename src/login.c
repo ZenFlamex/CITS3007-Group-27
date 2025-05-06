@@ -43,7 +43,6 @@ login_result_t handle_login(const char *userid, const char *password,
 
     // remove the contents of this function and replace it with your own code.
 
-
   (void) userid;
   (void) password;
   (void) client_ip;
