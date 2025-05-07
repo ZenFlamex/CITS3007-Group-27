@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+
+static bool email_is_valid(const char *email);
 /**
  * Create a new account with the specified parameters.
  *
@@ -29,8 +31,17 @@ account_t *account_create(const char *userid, const char *plaintext_password,
   } else {
     log_message(LOG_ERROR,"invalid userID. too long");
   }
+
   account_update_password(acc,plaintext_password);
-  account_set_email(acc,email);
+
+  if(email_is_valid(email)){
+    strcpy(acc->email,email);
+  } else {
+    log_message(LOG_ERROR,"invalid email");
+    account_free(acc);
+    return NULL;
+  }
+
   acc->unban_time = 0;
   acc->expiration_time = 0;
   acc->login_count = 0;
@@ -56,8 +67,9 @@ account_t *account_create(const char *userid, const char *plaintext_password,
   time_t current_time_std = time(NULL);
   struct tm *current_time_struct = localtime(&current_time_std);
 
-  int Birthday_year  = (birthdate[0]-'0') *1000 + (birthdate[1]-'0') * 100 + (birthdate[2]-'0') * 10 + (birthdate[3]-'0');
-  int Birthday_month = (birthdate[5]-'0') *  10 + (birthdate[6]-'0');
+  // creates date variables (note -1900 and -1 are to fix of by 1 errors)
+  int Birthday_year  = (birthdate[0]-'0') *1000 + (birthdate[1]-'0') * 100 + (birthdate[2]-'0') * 10 + (birthdate[3]-'0') -1900;
+  int Birthday_month = (birthdate[5]-'0') *  10 + (birthdate[6]-'0') -1;
   int Birthday_day   = (birthdate[8]-'0') *  10 + (birthdate[9]-'0');
 
   if (current_time_struct->tm_year < Birthday_year){
