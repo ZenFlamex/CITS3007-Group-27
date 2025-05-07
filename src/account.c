@@ -25,7 +25,7 @@ account_t *account_create(const char *userid, const char *plaintext_password,
   // Set default & supplied values
   acc->account_id = 0;
   if (strlen(userid) < USER_ID_LENGTH){
-    strcpy(acc->userid,*userid);
+    strcpy(acc->userid,userid);
   } else {
     log_message(LOG_ERROR,"invalid userID. too long");
   }
@@ -74,7 +74,7 @@ account_t *account_create(const char *userid, const char *plaintext_password,
 
     }
     else if (current_time_struct->tm_mon == Birthday_month){
-      if (current_time_struct <= Birthday_day){
+      if (current_time_struct->tm_mday <= Birthday_day){
         log_message(LOG_ERROR,"invalid birthday (day has not happened)");
         account_free(acc);
         return NULL;
@@ -82,7 +82,7 @@ account_t *account_create(const char *userid, const char *plaintext_password,
     }
   }
 
-  strcpy(acc->birthdate,*birthdate);
+  strcpy(acc->birthdate,birthdate);
   
   return acc;
 }
@@ -112,14 +112,7 @@ bool account_validate_password(const account_t *acc, const char *plaintext_passw
  */
 bool account_update_password(account_t *acc, const char *new_plaintext_password)
 {
-  //NOTE THE SALT AND HASH IN THIS FUNCTION ARE TEMPORARY AND NEED TO BE CHANGED!
-  char *salt[HASH_LENGTH] = "TEMP SALT";
-  char *password_hash[HASH_LENGTH] = TEMP_HASH_FUNCTION(new_plaintext_password, salt);
-  char *combined_salt_hash[HASH_LENGTH];
-
-  strcat(combined_salt_hash,password_hash);
-  strcpy(acc->password_hash,combined_salt_hash);
-
+  // Function is now in Weishen branch
   return true;
 }
 
@@ -210,7 +203,7 @@ void account_set_expiration_time(account_t *acc, time_t t)
  */
 bool email_is_valid(const char *email)
 {
-  int email_length = strlen(email);
+  size_t email_length = strlen(email);
 
   if (email_length >= EMAIL_LENGTH)
   {
