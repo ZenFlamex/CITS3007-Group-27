@@ -8,6 +8,8 @@
 #include <stdbool.h>
 #include <time.h>
 #include <unistd.h>
+#include <arpa/inet.h>  // For inet_addr()
+#include <netinet/in.h> // For IP formatting
 
 #include "account.h"
 
@@ -73,12 +75,10 @@ ck_assert_msg(0, "account_create not yet implemented");
 
 /**
  * Test that account_free works with NULL (contract states account_free can accept NULL)
- * TODO: This test will fail until account_free is properly implemented
  */
 #test test_account_free_with_null
-// TODO: Implement account_free function to pass this test
-// Should not crash when passed NULL
-ck_assert_msg(0, "account_free not yet implemented");
+account_free(NULL);
+ck_assert(true);
 
 /* 
  * Account Email Test Cases
@@ -170,19 +170,24 @@ ck_assert_int_eq(account_is_expired(& acc), 0); // Should not be expired because
 
 /**
  * Test recording a successful login
- * TODO: This test will fail until account_record_login_success is implemented
  */
 #test test_account_record_login_success
-// TODO: Implement account_record_login_success function to pass this test
-ck_assert_msg(0, "account_record_login_success not yet implemented");
+account_t acc = create_dummy_account();
+ip4_addr_t ip = inet_addr("127.0.0.1");
+account_record_login_success(& acc, ip);
+ck_assert_int_eq(acc.login_count, 1);
+ck_assert_int_eq(acc.login_fail_count, 0);
+ck_assert_int_eq(acc.last_ip, ip);
+ck_assert(acc.last_login_time > 0);
 
 /**
  * Test recording a failed login
- * TODO: This test will fail until account_record_login_failure is implemented
  */
 #test test_account_record_login_failure
-// TODO: Implement account_record_login_failure function to pass this test
-ck_assert_msg(0, "account_record_login_failure not yet implemented");
+account_t acc = create_dummy_account();
+account_record_login_failure(& acc);
+ck_assert_int_eq(acc.login_fail_count, 1);
+ck_assert_int_eq(acc.login_count, 0);
 
 /* 
  * Account Summary Test Case
@@ -193,11 +198,25 @@ ck_assert_msg(0, "account_record_login_failure not yet implemented");
 
 /**
  * Test printing an account summary to a file
- * TODO: This test will fail until account_print_summary is implemented
  */
 #test test_account_print_summary
-// TODO: Implement account_print_summary function to pass this test
-ck_assert_msg(0, "account_print_summary not yet implemented");
+account_t acc = create_dummy_account();
+strncpy(acc.userid, "dave", sizeof(acc.userid) - 1);
+acc.userid[sizeof(acc.userid) - 1] = '\0';
+
+strncpy(acc.email, "dave@example.com", sizeof(acc.email) - 1);
+acc.email[sizeof(acc.email) - 1] = '\0';
+
+strncpy(acc.birthdate, "1985-12-2", sizeof(acc.birthdate));
+acc.birthdate[sizeof(acc.birthdate) - 1] = '\0'; // ensure null-termination
+
+acc.login_count = 5;
+acc.login_fail_count = 1;
+acc.last_login_time = 1700000000;
+acc.last_ip = inet_addr("127.0.0.1");
+acc.unban_time = 0;
+acc.expiration_time = 0;
+ck_assert(account_print_summary(& acc, STDOUT_FILENO));
 
 /* 
  * Password Handling Test Cases
@@ -208,26 +227,26 @@ ck_assert_msg(0, "account_print_summary not yet implemented");
 
 /**
  * Test that updated password hash is not the plaintext password
- * TODO: This test will fail until account_update_password is implemented
  */
 #test test_account_update_password_neq_plaintext
-// TODO: Implement account_update_password function to pass this test
-ck_assert_msg(0, "account_update_password not yet implemented");
+account_t acc = create_dummy_account();
+account_update_password(& acc, "mypassword");
+ck_assert(strcmp(acc.password_hash, "mypassword") != 0);
 
 /**
  * Test validation of a correct password
- * TODO: This test will fail until account_validate_password is implemented
  */
 #test test_account_validate_password_ok
-// TODO: Implement account_validate_password function to pass this test
-ck_assert_msg(0, "account_validate_password not yet implemented");
+account_t acc = create_dummy_account();
+ck_assert(account_update_password(& acc, "secretpass"));
+ck_assert(account_validate_password(& acc, "secretpass"));
 
 /**
  * Test validation of an incorrect password
- * TODO: This test will fail until account_validate_password is implemented
  */
 #test test_account_validate_password_wrong
-// TODO: Implement account_validate_password function to pass this test
-ck_assert_msg(0, "account_validate_password not yet implemented");
+account_t acc = create_dummy_account();
+ck_assert(account_update_password(& acc, "rightpass"));
+ck_assert(!account_validate_password(& acc, "wrongpass"));
 
 // vim: syntax=c :
