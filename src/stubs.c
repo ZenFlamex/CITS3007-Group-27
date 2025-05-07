@@ -17,17 +17,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 /**
  * Abort immediately for unrecoverable errors /
  * invalid program state.
- * 
+ *
  * Arguments:
  * - msg: message to log before aborting
- * 
+ *
  * This function should not return.
  */
-static void panic(const char *msg) {
+static void panic(const char *msg)
+{
   fprintf(stderr, "PANIC: %s\n", msg);
   abort();
 }
@@ -36,37 +36,39 @@ static void panic(const char *msg) {
 // This mutex is used to ensure that log messages are printed in a thread-safe manner.
 static pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void log_message(log_level_t level, const char *fmt, ...) {
+void log_message(log_level_t level, const char *fmt, ...)
+{
   pthread_mutex_lock(&log_mutex);
 
   va_list args;
   va_start(args, fmt);
-  switch (level) {
-    case LOG_DEBUG:
-      fprintf(stderr, "DEBUG: ");
-      break;
-    case LOG_INFO:
-      fprintf(stdout, "INFO: ");
-      break;
-    case LOG_WARN:
-      fprintf(stderr, "WARNING: ");
-      break;
-    case LOG_ERROR:
-      fprintf(stderr, "ERROR: ");
-      break;
-    default:
-      panic("Invalid log level");
-      break;
+  switch (level)
+  {
+  case LOG_DEBUG:
+    fprintf(stderr, "DEBUG: ");
+    break;
+  case LOG_INFO:
+    fprintf(stdout, "INFO: ");
+    break;
+  case LOG_WARN:
+    fprintf(stderr, "WARNING: ");
+    break;
+  case LOG_ERROR:
+    fprintf(stderr, "ERROR: ");
+    break;
+  default:
+    panic("Invalid log level");
+    break;
   }
   vfprintf(stderr, fmt, args);
-  fprintf(stderr, "\n");  // newline, optional
+  fprintf(stderr, "\n"); // newline, optional
   va_end(args);
 
   pthread_mutex_unlock(&log_mutex);
 }
 
-
-bool account_lookup_by_userid(const char *userid, account_t *acc) {
+bool account_lookup_by_userid(const char *userid, account_t *acc)
+{
   // This is a stub function. In a real implementation, this function would
   // query a database to find the account by user ID.
   // This implementation returns true and fills in a valid struct for userid "bob",
@@ -74,7 +76,8 @@ bool account_lookup_by_userid(const char *userid, account_t *acc) {
 
   // Arguments must be non-null or behaviour is undefined; we choose to
   // abort in this case.
-  if (!userid || !acc) {
+  if (!userid || !acc)
+  {
     panic("Invalid arguments to account_lookup_by_userid");
   }
 
@@ -82,8 +85,9 @@ bool account_lookup_by_userid(const char *userid, account_t *acc) {
   // userid must be a valid, null-terminated string.
   // (Note that it is impossible in C for a function to check whether a string has been
   // properly null-terminated; this is always the responsibility of the caller.)
-  if (strncmp(userid, "bob", USER_ID_LENGTH) == 0) {
-    account_t bob_acc = { 0 };
+  if (strncmp(userid, "bob", USER_ID_LENGTH) == 0)
+  {
+    account_t bob_acc = {0};
 
     strcpy(bob_acc.userid, "bob");
     strcpy(bob_acc.email, "bob.smith@example.com");
@@ -93,4 +97,3 @@ bool account_lookup_by_userid(const char *userid, account_t *acc) {
   }
   return false;
 }
-

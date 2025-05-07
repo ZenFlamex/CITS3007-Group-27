@@ -8,8 +8,9 @@
 login_result_t handle_login(const char *userid, const char *password,
                             ip4_addr_t client_ip, time_t login_time,
                             int client_output_fd,
-                            login_session_data_t *session) 
+                            login_session_data_t *session)
 {
+
   account_t acc;
   if (!account_lookup_by_userid(userid, &acc)) {
     dprintf(client_output_fd, "Login failed: user not found.\n");
@@ -49,6 +50,7 @@ login_result_t handle_login(const char *userid, const char *password,
   (void) login_time;
   (void) client_output_fd;
   (void) session;
+
 
   return LOGIN_SUCCESS;
 }

@@ -8,10 +8,12 @@
 #include <stdbool.h>
 #include <time.h>
 #include <unistd.h>
+
 #include <arpa/inet.h>
-#include "account.h"
+
 
 #define ARR_SIZE(arr)(sizeof(arr) / sizeof((arr)[0]))
+
 
 static account_t create_dummy_account(void)
 {
@@ -136,5 +138,6 @@ ck_assert(account_validate_password(&acc, "secretpass"));
 account_t acc = create_dummy_account();
 ck_assert(account_update_password(&acc, "rightpass"));
 ck_assert(!account_validate_password(&acc, "wrongpass"));
+
 
 // vim: syntax=c :

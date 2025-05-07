@@ -254,3 +254,4 @@ bool account_print_summary(const account_t *acct, int fd) {
 
   return written > 0;
 }
+
