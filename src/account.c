@@ -9,13 +9,9 @@
 #include "account.h"
 #include "logging.h"
 #include <limits.h>
-#include <crypt.h>
-#include <arpa/inet.h>
 #include <netinet/in.h>  // For IP formatting
 #include <arpa/inet.h>   // For inet_ntop
 #include <sodium.h>
-#include "banned.h"
-
 /**
  * Create a new account with the specified parameters.
  *
