@@ -1,4 +1,1 @@
-# you can add the name of Ubuntu packages which need
-# to be installed below, one package per line
-
 libsodium-dev
