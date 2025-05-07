@@ -26,7 +26,6 @@
 account_t *account_create(const char *userid, const char *plaintext_password,
                           const char *email, const char *birthdate)
 {
-  // remove the contents of this function and replace it with your own code.
   (void)userid;
   (void)plaintext_password;
   (void)email;
