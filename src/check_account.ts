@@ -207,8 +207,7 @@ acc.userid[sizeof(acc.userid) - 1] = '\0';
 strncpy(acc.email, "dave@example.com", sizeof(acc.email) - 1);
 acc.email[sizeof(acc.email) - 1] = '\0';
 
-strncpy(acc.birthdate, "1985-12-2", sizeof(acc.birthdate));
-acc.birthdate[sizeof(acc.birthdate) - 1] = '\0'; // ensure null-termination
+memcpy(acc.birthdate, "1985-12-02", BIRTHDATE_LENGTH);
 
 acc.login_count = 5;
 acc.login_fail_count = 1;
