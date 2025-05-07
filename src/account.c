@@ -66,19 +66,38 @@ bool account_validate_password(const account_t *acc, const char *plaintext_passw
     return false;
   }
 
+  // Enforce character diversity
+  bool has_upper = false, has_lower = false, has_digit = false, has_special = false;
+  for (size_t i = 0; i < pwd_len; ++i)
+  {
+    unsigned char c = (unsigned char)plaintext_password[i];
+    if (isupper(c)) has_upper = true;
+    else if (islower(c)) has_lower = true;
+    else if (isdigit(c)) has_digit = true;
+    else if (ispunct(c)) has_special = true;
+  }
+
+  if (!has_upper || !has_lower || !has_digit || !has_special)
+  {
+    log_message(STDERR_FILENO, "Password must include upper, lower, digit, and special character");
+    return false;
+  }
+
   int result = crypto_pwhash_str_verify(acc->password_hash, plaintext_password, pwd_len);
   if (result == 0)
   {
     return true;
   }
-  else if (result == -1)
+
+  if (result == -1)
   {
     log_message(STDERR_FILENO, "account_validate_password: invalid password");
   }
   else
   {
-    log_message(STDERR_FILENO, "account_validate_password: unexpected libsodium error");
+    log_message(STDERR_FILENO, "account_validate_password: unexpected libsodium error (code=%d)", result);
   }
+
   return false;
 }
 
