@@ -83,13 +83,13 @@ bool account_validate_password(const account_t *acc, const char *plaintext_passw
     return false;
   }
 
+  // Secure password hash verification using libsodium
   int result = crypto_pwhash_str_verify(acc->password_hash, plaintext_password, pwd_len);
   if (result == 0)
   {
     return true;
   }
-
-  if (result == -1)
+  else if (result == -1)
   {
     log_message(STDERR_FILENO, "account_validate_password: invalid password");
   }
@@ -100,6 +100,7 @@ bool account_validate_password(const account_t *acc, const char *plaintext_passw
 
   return false;
 }
+
 
 bool account_update_password(account_t *acc, const char *new_plaintext_password)
 {
