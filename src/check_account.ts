@@ -239,8 +239,8 @@ ck_assert(strcmp(acc.password_hash, "mypassword") != 0);
  */
 #test test_account_validate_password_ok
 account_t acc = create_dummy_account();
-ck_assert(account_update_password(& acc, "secretpass"));
-ck_assert(account_validate_password(& acc, "secretpass"));
+ck_assert(account_update_password(&acc, "StrongPass1!"));
+ck_assert(account_validate_password(&acc, "StrongPass1!"));
 
 /**
  * Test validation of an incorrect password
@@ -289,13 +289,11 @@ ck_assert(!account_validate_password(& acc, "wrongpass"));
     // Create a test account with known credentials
     account_t acc = create_dummy_account();
     strcpy(acc.userid, "test_user");
-    const char *correct_password = "correct_password";
-    const char *wrong_password = "wrong_password";
-    
-    // Set up the account with correct password
+    const char *correct_password = "StrongPass1!";
+    const char *wrong_password = "WrongPass1!";
+
     account_update_password(&acc, correct_password);
-    
-    // Test password validation directly
+
     ck_assert(account_validate_password(&acc, correct_password));
     ck_assert(!account_validate_password(&acc, wrong_password));
     
@@ -373,20 +371,20 @@ ck_assert(!account_validate_password(& acc, "wrongpass"));
     // Create a test account that should successfully authenticate
     account_t acc = create_dummy_account();
     strcpy(acc.userid, "valid_user");
-    const char *password = "correct_password";
-    
+    const char *password = "StrongPass1!";
+
     // Set up the account with valid password
     account_update_password(&acc, password);
-    
+
     // Verify password validation works correctly
     ck_assert(account_validate_password(&acc, password));
-    ck_assert(!account_validate_password(&acc, "wrong_password"));
-    
+    ck_assert(!account_validate_password(&acc, "WrongPass1!"));
+
     // Make sure account isn't expired or banned
     time_t current_time = time(NULL);
-    account_set_expiration_time(&acc, current_time + 86400); // expires in 24 hours
+    account_set_expiration_time(&acc, current_time + 86400); // 24 hours from now
     account_set_unban_time(&acc, 0); // not banned
-    
+
     // Test individual components of login success flow
     ck_assert(!account_is_banned(&acc));
     ck_assert(!account_is_expired(&acc));
